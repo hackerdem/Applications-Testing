@@ -37,7 +37,7 @@ def testcase(test_name):
         
         #login ###########################
         
-        profile=['email','passport']
+        profile=['email','password']
         
         elem1=driver.find_element(By.XPATH,'//input[@name="email"]')
         s=driver.window_handles[0]
