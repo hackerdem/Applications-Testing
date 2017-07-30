@@ -6,11 +6,13 @@ import datetime
 import queue
 import sched
 from datetime import timedelta
+
+# Syncronisation of the threads ############################
 def lastclick(driver):
     try:
         elem=driver.find_element(By.XPATH,'/html/body/div[3]/div/div/div/div/div/div/button')
         time.sleep(3)
-        print("wait for all treads to come same point",datetime.datetime.now())
+        print("wait for all treads to come same point",datetime.datetime.now())#This is for syncronisation of all threads
         elem.click()
         time.sleep(30)
         driver.close()
@@ -19,13 +21,14 @@ def lastclick(driver):
         print(e)
         
     
-
+# Start lastclick event at a pecific time after all drivers come to this stage of the execution t be able to syncronise them
 def timing(driver):
     s=sched.scheduler(time.time)
     print(time.time())
     s.enter(120,0,lastclick(driver))
     s.run()
     
+# put xpatcs to an excel sheet and take them later for improvement and readability    
 def testcase(test_name):
     try:
         url='http://safechamp-8000.herokuapp.com/'
@@ -70,14 +73,6 @@ def testcase(test_name):
         driver.find_element(By.XPATH,'/html/body/div[3]/div/div/div/div/div/form/div[7]/div[2]/input').send_keys(test_name)
         driver.find_element(By.XPATH,'/html/body/div[3]/div/div/div/div/div/form/div[9]/div[2]/textarea').send_keys(test_name+" "+str(time.time()))
         timing(driver)
-        #click submit button############################
-        #print("wait for all treads to come same point")
-        #time.sleep(60)
-        #print(datetime.time())
-        
-        #driver.find_element(By.XPATH,'/html/body/div[3]/div/div/div/div/div/div/button').click()
-        #time.sleep(15)
-        #driver.close()
     except Exception as e:
         print(e)
         driver.close()
@@ -87,17 +82,21 @@ def threader():
         result=testcase(value)
         q.task_done()
 def exampling(test_list):
-    global q
+    
+    global q #create queue
     q=queue.Queue()
-    for x in range(30):
+    for x in range(30): # send tasks to threader
         t=threading.Thread(target=threader)
         #t.deamon=True
         t.start() 
-    for value in test_list:
+    for value in test_list: # put tasks in queue
         q.put(value)
     q.join()    
 
 def main():
+    #Increase range value if you want to increase test number, but don't forget to increase time.sleep if you increase the number of test
+    #since it will effect the system performance
+    
     test_list=["Test "+str(i) for i in range(5)]
     print(test_list)
     exampling(test_list)
