@@ -9,7 +9,11 @@ def login()
     uri = URI('http://54.252.241.122:8000/users/authenticate')
     http = Net::HTTP.new(uri.host, uri.port)
     req = Net::HTTP::Post.new(uri.path, 'Content-Type' => 'application/json')
+<<<<<<< HEAD:incident_number_test.rb
     req.body = {email: 'demo1@g.com', password: '**********'}.to_json
+=======
+    req.body = {email: 'demo1@g.com', password: '********'}.to_json
+>>>>>>> ad82cfe334c55b5b264ff0ba4d4dfca5537450f9:incident_num_test.rb
     res = http.request(req)
     tkn=JSON.parse(res.body)
     return tkn['result']['token']
